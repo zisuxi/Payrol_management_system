@@ -406,6 +406,7 @@
                             button.removeAttribute("disabled");
                             button.innerHTML = "Add Category";
                             var error = error.responseJSON;
+            
                             $.each(error.errors, function(key, value) {
                                 $("#" + key).html(value);
                             })

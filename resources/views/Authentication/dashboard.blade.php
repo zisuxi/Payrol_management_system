@@ -82,7 +82,6 @@
 
         <div class="container-fluid">
             <div class="row">
-
                 <div class="col-md-4 col-sm-6 col-12">
                     <div class="info-box bg-info">
                         <span class="info-box-icon"><i class="far fa-bookmark"></i></span>
@@ -103,14 +102,13 @@
                     <div class="info-box bg-success">
                         <span class="info-box-icon"><i class="far fa-thumbs-up"></i></span>
                         <div class="info-box-content">
-                            <span class="info-box-text">Active User</span>
+                            <span class="info-box-text">Active Categories</span>
                             <span class="info-box-number">{{ $activeUser }}</span>
                             <div class="progress">
                                 <div class="progress-bar" style="width: 70%"></div>
                             </div>
 
                         </div>
-
                     </div>
 
                 </div>
@@ -132,37 +130,74 @@
                 </div>
 
                 <div class="col-md-6 col-sm-6 col-12">
-                    <div class="info-box bg-danger">
-                        <span class="info-box-icon"><i class="fas fa-comments"></i></span>
-                        <div class="info-box-content">
-                            <span class="info-box-text">Monthly Ledger<strong
-                                    class="float-right">{{ $start_month . ' / ' . $end_month }}</strong></span>
-                            <span class="info-box-number">{{ $allledger }}</span>
-                            <div class="progress">
-                                <div class="progress-bar" style="width: 70%"></div>
+                    <div class="row info-box bg-danger">
+                        <div class="col-md-6">
+                            <div class="">
+                                <span class="info-box-icon"><i class="fas fa-comments"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Total Monthly Credit</span>
+                                    <span class="info-box-number">Rs:{{ $totalIncome }}</span>
+                                    <div class="progress">
+                                        <div class="progress-bar" style="width: 70%"></div>
+                                    </div>
+
+                                </div>
+
                             </div>
-
                         </div>
+                        <div class="col-md-6">
+                            <div class="">
+                                <span class="info-box-icon"><i class="fas fa-comments"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Total Monthly Dedit</span>
+                                    <span class="info-box-number">Rs:{{ $totalexpense }}</span>
+                                    <div class="progress">
+                                        <div class="progress-bar" style="width: 70%"></div>
+                                    </div>
 
+                                </div>
+
+                            </div>
+                        </div>
                     </div>
-
                 </div>
 
+
                 <div class="col-md-6 col-sm-6 col-12">
-                    <div class="info-box bg-success">
-                        <span class="info-box-icon"><i class="far fa-bookmark"></i></span>
-                        <div class="info-box-content">
-                            <span class="info-box-text"> Weekly Ledger <strong
-                                    class="float-right">{{ $start_week . ' / ' . $end_week }}</strong></span>
+                    <div class="row info-box bg-success">
+                        <div class="col-md-6">
+                            <div class="">
+                                <span class="info-box-icon"><i class="far fa-bookmark"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text"> Total Weekly credit </span>
 
-                            <span class="info-box-number"> {{ $tdayLedgerPrices }}</span>
-                            <div class="progress">
-                                <div class="progress-bar" style="width: 70%"></div>
+                                    <span class="info-box-number">Rs:{{ $totalincomeweekly }}</span>
+                                    <div class="progress">
+                                        <div class="progress-bar" style="width: 70%"></div>
+                                    </div>
+
+                                </div>
+
                             </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="">
+                                <span class="info-box-icon"><i class="far fa-bookmark"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Total Weekly Debit</span>
 
+                                    <span class="info-box-number">Rs:{{ $totalexpenseweekly }}</span>
+                                    <div class="progress">
+                                        <div class="progress-bar" style="width: 70%"></div>
+                                    </div>
+
+                                </div>
+
+                            </div>
                         </div>
 
                     </div>
+
 
                 </div>
 

@@ -25,19 +25,63 @@ class AuthenticationController extends Controller
         $activeUser = DB::table('categories')->where('status', 1)->get()->count();
         $allCategory = DB::table('categories')->get()->count();
         $allstaff = DB::table('staff')->get()->count();
-        $start_month= Carbon::now()->startOfMonth()->format("Y-m-d");
-        $end_month= Carbon::now()->endOfMonth()->format("Y-m-d");
 
+        //   income Ledger
+        $category = category::where('cat_type', 1)->get();
+        $totalIncome = 0;
+        foreach ($category as $cat) {
+            $start_month = Carbon::now()->startOfMonth()->format("Y-m-d");
+            $end_month = Carbon::now()->endOfMonth()->format("Y-m-d");
 
-        $allledger = DB::table('ledgers')->whereBetween('date',[$start_month, $end_month])->get()->count();
+            $incomeLedger = DB::table('ledgers')
+                ->where('category_type', $cat->id)
+                ->whereBetween('date', [$start_month, $end_month])->sum('price');
 
+            $totalIncome += $incomeLedger;
+        }
 
-        $start_week = Carbon::now()->startOfWeek()->format("Y-m-d");
-        $end_week = Carbon::now()->endOfWeek()->format("Y-m-d");
-        $tdayLedgerPrices = DB::table('ledgers')->whereBetween('date', [$start_week, $end_week])->get()->count();
+        // Expence Ledegr
 
+        $category = category::where('cat_type', 0)->get();
+        $totalexpense = 0;
+        foreach ($category as $cat) {
+            $start_month = Carbon::now()->startOfMonth()->format("Y-m-d");
+            $end_month = Carbon::now()->endOfMonth()->format("Y-m-d");
 
-        return view('Authentication.dashboard', compact("user", "activeUser", "allCategory", "allstaff", "allledger", "tdayLedgerPrices", "start_week", "end_week","start_month","end_month"));
+            $incomeLedger = DB::table('ledgers')
+                ->where('category_type', $cat->id)
+                ->whereBetween('date', [$start_month, $end_month])->sum('price');
+
+            $totalexpense += $incomeLedger;
+        }
+
+        //  weekly expense
+
+        $category = category::where('cat_type', 0)->get();
+        $totalincomeweekly = 0;
+        foreach ($category as $cat) {
+            $start_month = Carbon::now()->startOfWeek()->format("Y-m-d");
+            $end_month = Carbon::now()->endOfWeek()->format("Y-m-d");
+
+            $incomeLedger = DB::table('ledgers')
+                ->where('category_type', $cat->id)
+                ->whereBetween('date', [$start_month, $end_month])->sum('price');
+
+            $totalincomeweekly += $incomeLedger;
+        }
+        $category = category::where('cat_type', 1)->get();
+        $totalexpenseweekly = 0;
+        foreach ($category as $cat) {
+            $start_month = Carbon::now()->startOfWeek()->format("Y-m-d");
+            $end_month = Carbon::now()->endOfWeek()->format("Y-m-d");
+
+            $incomeLedger = DB::table('ledgers')
+                ->where('category_type', $cat->id)
+                ->whereBetween('date', [$start_month, $end_month])->sum('price');
+
+            $totalexpenseweekly += $incomeLedger;
+        }
+        return view('Authentication.dashboard', compact("user", "activeUser", "allCategory", "allstaff", "totalIncome", "totalexpense", "totalincomeweekly", "totalexpenseweekly"));
     }
 
 

@@ -25,10 +25,8 @@
             <div class="card-body login-card-body">
                 @if (session()->has('error'))
                     <div class="alert alert-danger text-center" role="alert">
-                        <div class="alert alert-danger" role="alert">
+                        <strong>{{ session()->get('error') }} </strong>
 
-                            <strong>{{ session()->get('error') }} </strong>
-                          </div>
                     </div>
                 @endif
                 <form action="{{ url('/login') }}" method="POST">

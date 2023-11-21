@@ -40,7 +40,7 @@
                             <td> {{ ucfirst($array_data[$vdata->id]['cat_name']) }} </td>
                             <td>
                                 @if ($array_data[$vdata->id]['cat_type'] == 0)
-                                    <span class="badge  text-white   bg-danger" >
+                                    <span class="badge  text-white   bg-danger">
                                         {{ 'Expence Category' }}</span>
                                 @else
                                     <span class="badge bg-success text-white">{{ 'Income Category' }}</span>
@@ -108,6 +108,7 @@
                                             <select name="category_type" id="select_category" class="form-control select2">
                                             </select>
                                         </div>
+                                        <span id="category_type" class="text-danger"></span>
                                     </div>
 
                                     <div class="row mt-2">
@@ -116,7 +117,7 @@
                                             <input type="date" name="date" class="form-control"
                                                 placeholder="Enter Date">
                                         </div>
-
+                                        <span id="date" class="text-danger"></span>
                                     </div>
                                     <div class="row mt-2">
                                         <div class="col-md-12">
@@ -124,7 +125,7 @@
                                             <input type="number" name="price" class="form-control"
                                                 placeholder="Enter Price">
                                         </div>
-
+                                        <span class="text-danger" id="price"> </span>
                                     </div>
                                     <div class="row mt-2">
                                         <div class="col-md-12">
@@ -222,16 +223,6 @@
     </div>
 @endsection
 @section('script')
-    {{-- <script>
-        $(function() {
-            $("#example1").DataTable({
-                "responsive": true,
-                "lengthChange": false,
-                "autoWidth": false,
-                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-        });
-    </script> --}}
     <script>
         $(function() {
             $('.select2').select2()
@@ -349,8 +340,15 @@
                         } else {
                             button.removeAttribute("disabled");
                             button.innerHTML = "Add Category";
-                            alert(respo);
                         }
+                    },
+                    error: function(error) {
+                        button.removeAttribute("disabled");
+                        button.innerHTML = "Add staff";
+                        var error = error.responseJSON;
+                        $.each(error.errors, function(key, value) {
+                            $("#" + key).append(value)
+                        })
                     }
                 })
             });

@@ -18,11 +18,11 @@ class LedgerController extends Controller
         $viewData = ledger::orderBy('id', 'DESC')->get();
         $array_data = array();
         foreach ($viewData as $value) {
-            $category = category::where('id',$value->category_type)->first(); 
+            $category = category::where('id', $value->category_type)->first();
             $array_data[$value->id] =  $category;
         }
         $user = DB::table('authentications')->where('email', session()->get('user_added'))->first();
-        return view('ledger.viewLedger',compact('user', 'viewData', 'array_data'));
+        return view('ledger.viewLedger', compact('user', 'viewData', 'array_data'));
     }
 
     /**
@@ -42,9 +42,14 @@ class LedgerController extends Controller
      */
     public function store(StoreledgerRequest $request)
     {
+   $validation=     $request->validate([
+            'category_type'=>'required',
+            'date'=>'required',
+            'price'=>'required',
+
+        ]);
+
         $input = $request->all();
-        //   $type=category::where('id',$request->category_type)->first();
-        //    $input['type']=$type->category_type;
         ledger::insert($input);
         return response()->json([
             "message" => 200,

@@ -4,17 +4,20 @@
         <div class="row ">
             <div class="col-md-2">
                 <label for="" style="font-size: 12px;">Select Category</label>
-                <select class="form-control select2 " id="main_cat">
+                <select class="form-control select2 filterNow" id="category_id">
                     <option value="" selected disabled> Choose ....</option>
                     <option value="income">Income </option>
                     <option value="expence">Expence </option>
                 </select>
             </div>
             <div class="col-md-3">
-                <label for="" id="" style="font-size: 12px;">Select <span id="expense"> (Sub
-                        Category)</span></label>
-                <select class="form-control select2 filterNow " id="sub_cat" style="width: 100%;">
+                <label for="" id="" style="font-size: 12px;">Select <span
+                        id="select_Exp">(Expences)</span></label>
+                <select class="form-control select2 filterNow" id="expense_id" style="width: 100%;">
                     <option value="" selected disabled> Choose ....</option>
+                    {{-- @foreach ($allCats as $vdata)
+                        <option value="{{ $vdata['id'] }}">{{ ucfirst($vdata['cat_name']) }} </option>
+                    @endforeach --}}
 
                 </select>
             </div>
@@ -23,7 +26,7 @@
                     <form>
                         @csrf
                         <label class="" style="font-size: 12px;">Select Period</label>
-                        <select class="form-control  filterNow" style="width: 100%;" id="filter_data">
+                        <select class="form-control select2 filterNow" id="select_period" style="width: 100%;">
                             <option value="" selected disabled> Choose option....</option>
                             <option value="Today">Today</option>
                             <option value="Yesterday">Yesterday</option>
@@ -62,8 +65,7 @@
                     <th style="font-size: 14px;">Description</th>
                 </tr>
             </thead>
-            <tbody id="appenedData">
-
+            <tbody id="TableEmpty">
                 @forelse ($viewData as $vdata)
                     <tr>
                         <td>{{ $vdata->id }}</td>
@@ -73,19 +75,19 @@
                         @endphp
                         <td> {{ $dateformat }} </td>
                         <td>
-                            @if ($array_data[$vdata->id][0]['cat_type'] == 0)
+                            @if ($array_data[$vdata->id]['cat_type'] == 0)
                                 <span class="badge  text-white" style="background-color:red;">
                                     {{ 'Expence Category' }}</span>
                             @else
                                 <span class="badge bg-success text-white">{{ 'Income Category' }}</span>
                             @endif
                         </td>
-                        <td> {{ ucfirst($array_data[$vdata->id][0]['cat_name']) }} </td>
+                        <td> {{ ucfirst($array_data[$vdata->id]['cat_name']) }} </td>
+
                         <td>{{ $vdata->price }}</td>
                         <td>{{ $vdata->description }}</td>
 
                     </tr>
-
                 @empty
                 @endforelse
             </tbody>
@@ -94,7 +96,7 @@
 @endsection
 @section('script')
     <script>
-        $('.filterNow').change(function() {
+        $('#select_period').change(function() {
             var selectedValue = $(this).val();
             var currentDate = new Date();
             var selectedDate;
@@ -157,65 +159,88 @@
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
-            });
-            $(document).on("change", "#main_cat", function() {
-                var cat_val = $(this).val();
-                $.ajax({
-                    url: "{{ route('apply_filters') }}",
-                    type: "post",
-                    data: {
-                        cat_val: cat_val
-                    },
-                    success: function(res) {
-                        $("#sub_cat").empty();
-                        $("#sub_cat").append("<option>Choose Option</option>")
-                        $.each(res.message, function(key, value) {
-
-                            $("#sub_cat").append("<option value='" + value[0]['id'] +
-                                "'>" +
-                                key +
-                                "</option>");
-
-                        })
-                    }
-                })
             })
-            $(document).on("change", ".filterNow", function() {
-                var sub_cat = $("#sub_cat").val();
-                var period = $("#filter_data ").val();
+            $(".filterNow").on("change", function() {
+
+                var niche = $("#category_id").val();
+                var catType = $("#expense_id").val();
+
+                var period = $("#select_period").val();
                 var from_date = $("#from_date").val();
                 var to_date = $("#to_date").val();
                 $.ajax({
-                    url: "{{ route('filterNow') }}",
-                    type: "post",
+                    type: 'POST',
+                    url: "{{ route('apply_filters') }}",
                     data: {
-                        sub_cat: sub_cat,
-                        period: period,
+                        niche: niche,
+                        catType: catType,
                         from_date: from_date,
                         to_date: to_date,
+                        period: period,
+                        _token: "{{ csrf_token() }}"
                     },
                     success: function(res) {
-                        $("#appenedData").empty();
+                        if (res.message2 == "category") {
+                            $("#expense_id").empty();
+                            $("#expense_id").append("<option>'chooose</option>");
+
+                            $.each(res.message, function(key, index) {
+                                var key_split = key.split("_");
+                                $("#expense_id").append("<option value=" +
+                                    key_split[1] +
+                                    " >" +
+                                    key_split[0] + "</option>")
+                            })
+                        } else {
+                            $("#expense_id").empty();
+
+                            $.each(res.message, function(key, index) {
+                                var key_split = key.split("_");
+                                $("#expense_id").append("<option value=" +
+                                    key_split[1] +
+                                    " >" +
+                                    key_split[0] + "</option>")
+                            })
+                        }
+                        $("#TableEmpty").empty();
+
                         var id = 1;
                         $.each(res.record, function(key, value) {
-                            if (value.cat_type == 1) {
-                                var catType =
-                                    "<span class='badge text-white bg-success'>income Category</span>";
-                            } else {
-                                var catType =
-                                    "<span class='badge text-white bg-danger'>Expense Category</span>";
-
-                            }
-
-                            $("#appenedData").append('<tr><td>' + id++ +
-                                '</td><td>' + value.date + '</td><td>' + catType +
-                                '</td><td>' + value.cat_name +
-                                '</td><td>' + value.price + '</td><td>' + value
-                                .description + '</td></tr>')
-                        })
+                            var categoryType = (value.cat_type == 1) ?
+                                "<span  class='badge text-white bg-success'>Income Category</span>" :
+                                " <span  class='badge text-white bg-danger'>Expense Category</span>";
+                            $("#TableEmpty").append('<tr><td>' + id++ +
+                                '</td><td>' + value.date + '</td><td>' +
+                                categoryType + '</td><td>' + value
+                                .cat_name +
+                                '</td><td>' + value.price +
+                                '</td><td>' + value
+                                .description + '</td></tr>');
+                        });
                     }
                 })
-            })
-        })
+
+            });
+
+        });
     </script>
+
 @endsection
+ {{-- <?php
+   if (isset($request->niche) == '') {
+            return 'Please Select Main Category';
+        }
+        $mainCat = isset($request->niche) ? $request->niche : "";
+        $subCat = isset($request->catType) ? $request->catType : "";
+        $start_date = $request->to_date;
+        $end_date = $request->from_date;
+        $getRecord = DB::table('ledgers as ld')
+            ->join('categories as ct', 'ld.category_type', '=', 'ct.id')
+            ->selectRaw('ld.id as id, ld.price as price, ld.description as description, ld.date as date, ct.cat_name as cat_name, ct.cat_type as cat_type')
+            ->where("ld.category_type", '=', $subCat)
+            ->whereBetween('ld.date', [$start_date, $end_date])->get();
+
+        return response()->json([
+            'record' => $getRecord,
+        ]);
+ ?> --}}

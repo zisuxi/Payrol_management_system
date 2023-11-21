@@ -40,4 +40,5 @@ Route::group(["middleware" => ["authsecurity"]], function () {
     Route::get("/getincomeCategory", [LedgerController::class, "incomeCategory"]);
     Route::get("/getexpenceCategroy", [LedgerController::class, "expenceCategory"]);
     Route::post('apply_filters', [ReportController::class, 'myFuncton'])->name('apply_filters');
+    Route::post("filterNow",[ReportController::class,"compareFunction"])->name('filterNow');
 });
